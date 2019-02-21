@@ -1,0 +1,4 @@
+This is a new file
+Isn't it grand
+I like long files.
+This isn't that long.
