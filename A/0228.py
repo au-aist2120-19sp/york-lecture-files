@@ -55,4 +55,4 @@ def hi(pers):
     print('hi my name is ', pers.name)
 
 hi(paul)
-hi("paul")
+# hi("paul") NOOOOO
