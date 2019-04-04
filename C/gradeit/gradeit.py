@@ -1,3 +1,5 @@
+# START by running: pip install openpyxl
+
 from pprint import pprint as pp
 import sys
 import os
@@ -9,6 +11,30 @@ def check_exists(filename):
     if not os.path.exists(filename):
         print(f"ERROR: {filename} doesn't exist")
         exit()
+
+def find_col_with_val(wksheet, val, row_number):
+    '''
+    Given a value and a row_number, return the column
+    in which the FIRST occurrence of value is found.
+    '''
+    row = wksheet[row_number]
+    for cell in row:
+        #print(cell.value)
+        if cell.value.lower() == val.lower():
+            return cell.column_letter
+    return ''
+
+def find_row_with_val(wksheet, val, col_letter):
+    '''
+    Given a value and a col_letter, return the row
+    in which the FIRST occurrence of value is found.
+    '''
+    col = wksheet[col_letter]
+    for cell in col:
+        #print(cell.value)
+        if cell.value.lower() == val.lower():
+            return cell.row
+    return -1
 
 # python gradeit.py [newgrades] [gradesheet] [translation]
 
@@ -57,6 +83,7 @@ for row in ng_sheet.iter_rows(2):
         if ghid == tr_row[1].value:
             email = tr_row[0].value
             break
+    tr_book.close()
 
     if email == 'NA':
         print(f"WARNING: {ghid} not found")
@@ -72,5 +99,19 @@ for row in ng_sheet.iter_rows(2):
     print(f'PROCESSING: {assn}')
 
     # DONE FOR TODAY
+
+    # FIND email for the id
+    gr_book = xl.load_workbook(gradesheet)
+    gr_sheet = gr_book.worksheets[0]
+    
+    col = find_col_with_val(gr_sheet, assn, 1)
+    row = find_row_with_val(gr_sheet, email, 'B')
+    coord = col + str(row)
+    print(f"Changing {coord} to {grade}")
+
+    gr_sheet[coord].value = grade
+    
+    gr_book.save(gradesheet)
+    gr_book.close()
 
 ng_book.close()
